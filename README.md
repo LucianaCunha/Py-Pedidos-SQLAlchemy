@@ -68,8 +68,7 @@ pip install SQLAlchemy pymysql
  - **4. Executar o Projeto**
 
 Para testar as operações CRUD, execute o arquivo main.py:
-```
-Bash
+```Bash
 
 python main.py
 ```
