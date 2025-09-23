@@ -47,8 +47,7 @@ pip install SQLAlchemy pymysql
   
  **1. Crie o Banco de Dados (Opcional):** Você pode criar o banco de dados db_pedidos manualmente no MySQL. O SQLAlchemy criará as tabelas pedido e item_pedido automaticamente na primeira execução do main.py.
   
-```
-Sql
+```Sql
 
     CREATE DATABASE IF NOT EXISTS db_pedidos;
 ```
