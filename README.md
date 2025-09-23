@@ -64,7 +64,6 @@ pip install SQLAlchemy pymysql
     # Ex: "mysql+pymysql://root:minhasenha@localhost/db_pedidos"
     # ...
 ```
-
  - **4. Executar o Projeto**
 
 Para testar as operações CRUD, execute o arquivo main.py:
