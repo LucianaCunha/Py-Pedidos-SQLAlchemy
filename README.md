@@ -1,5 +1,6 @@
 # Py-Pedidos-SQLAlchemy
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/LucianaCunha/Py-Pedidos-SQLAlchemy/blob/main/LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![MySQL Connector](https://img.shields.io/badge/Connector-MySQL-blue.svg)](https://pypi.org/project/mysql-connector-python/)
 [![ORM: SQLAlchemy](https://img.shields.io/badge/ORM-SQLAlchemy-darkgreen.svg)](https://www.sqlalchemy.org/)
 
