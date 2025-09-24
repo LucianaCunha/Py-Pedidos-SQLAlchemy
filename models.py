@@ -1,18 +1,25 @@
-from datetime import date
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, DECIMAL
+from sqlalchemy.orm import relationship, declarative_base
 
-class Pedido:
-    def __init__(self, cliente):
-        self.id = None
-        self.cliente = cliente
-        self.itens = []
 
-    def add_item(self, item):
-        self.itens.append(item)
+Base = declarative_base()
 
-class ItemPedido:
-    def __init__(self, produto, quantidade, preco, categoria):
-        self.id = None
-        self.produto = produto
-        self.quantidade = quantidade
-        self.preco = preco
-        self.categoria = categoria
+class Pedido(Base):
+    __tablename__ = 'pedido'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    cliente = Column(String(100))
+    
+
+    itens = relationship("ItemPedido", back_populates="pedido", cascade="all, delete-orphan")
+
+class ItemPedido(Base):
+    __tablename__ = 'item_pedido'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    pedido_id = Column(Integer, ForeignKey('pedido.id'))
+    produto = Column(String(100))
+    quantidade = Column(Integer)
+    preco = Column(DECIMAL(10,2))
+    categoria = Column(String(100)) # ADICIONADO
+
+    pedido = relationship("Pedido", back_populates="itens")

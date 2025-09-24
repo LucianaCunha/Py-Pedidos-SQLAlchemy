@@ -1,70 +1,89 @@
-from database import Database
-from models import Pedido, ItemPedido
+from models import Base, Pedido, ItemPedido
+from database import engine
 from control import PedidoControl
 
+# Criar tabelas no banco, se não existirem
+Base.metadata.create_all(bind=engine)
+
 if __name__ == "__main__":
-    db = Database(host='localhost', user='root', password='', database='db_pedidos')
-    control = PedidoControl(db)
-    #pedido=Pedido(cliente="Claudio Ulisse")
-    #pedido.id=7
-    #control.atualizar_pedido(pedido)
+    control = PedidoControl()
     
-   # control.salvar_pedido(pedido)
-
-   #1. Inserção - Criar novo pedido
-print("=== 1. Inserção ===")
-pedido_novo = Pedido(cliente="Luciana Cunha")
-
-# Criar itens com categoria
-item1 = ItemPedido("Notebook Dell", 1, 2800.00, "Eletrônicos")
-item2 = ItemPedido("Mouse Logitech", 1, 85.00, "Periféricos")
-item3 = ItemPedido("Cabo HDMI", 2, 25.00, "Cabos")
-
-pedido_novo.add_item(item1)
-pedido_novo.add_item(item2)
-pedido_novo.add_item(item3)
-
-control.salvar_pedido(pedido_novo)
-print(f"Pedido {pedido_novo.id} inserido com sucesso!")
-
-#2. Listagem - Mostrar todos os pedidos
-print("\n=== 2. LISTAGEM ===")
-pedidos = control.listar_pedidos_com_itens()
-for p in pedidos:
-        print(f"Pedido {p.id} - Cliente: {p.cliente}")
-        for i in p.itens:
-            print(f"  Produto: {i.produto}, Qtd: {i.quantidade}, Preço: {i.preco}, Categoria: {i.categoria}")
-        print()
-
-    # 3. ATUALIZAÇÃO - Modificar cliente do último pedido inserido
-print("=== 3. ATUALIZAÇÃO ===")
-if pedido_novo.id:
-        pedido_novo.cliente = "Maria Silva Santos"
-        control.atualizar_pedido(pedido_novo)
-        print(f"Pedido {pedido_novo.id} atualizado!")
+    try:
+        # 1. INSERÇÃO
+        print("=== 1. INSERÇÃO ===")
+        # Criar pedido (REMOVIDO parâmetro data_pedido)
+        pedido_novo = Pedido(cliente="João Santos")
         
-        # Mostrar resultado da atualização
-        pedidos = control.listar_pedidos_com_itens()
-        for p in pedidos:
-            if p.id == pedido_novo.id:
-                print(f"Pedido atualizado: {p.id} - Cliente: {p.cliente}")
-    
-    # 4. DELEÇÃO - Remover o pedido criado
-print("\n=== 4. DELEÇÃO ===")
-if pedido_novo.id:
-        control.deletar_pedido(pedido_novo.id)
-        print(f"Pedido {pedido_novo.id} deletado!")
+        # Criar itens (ADICIONADO parâmetro categoria)
+        item1 = ItemPedido(
+            produto="Smartphone Samsung",
+            quantidade=1,
+            preco=1200.00,
+            categoria="Eletrônicos"  # ADICIONADO
+        )
         
-        # Confirmar deleção
+        item2 = ItemPedido(
+            produto="Capa Protetora",
+            quantidade=1,
+            preco=45.00,
+            categoria="Acessórios"  # ADICIONADO
+        )
+        
+        item3 = ItemPedido(
+            produto="Carregador USB-C",
+            quantidade=2,
+            preco=35.00,
+            categoria="Cabos"  # ADICIONADO
+        )
+        
+        # Adicionar itens ao pedido
+        pedido_novo.itens.extend([item1, item2, item3])
+        
+        # Salvar pedido
+        pedido_salvo = control.salvar_pedido(pedido_novo)
+        print(f"Pedido {pedido_salvo.id} inserido com sucesso!")
+        
+        # 2. LISTAGEM
+        print("\n=== 2. LISTAGEM ===")
         pedidos = control.listar_pedidos_com_itens()
-        print("Pedidos restantes:")
-        if not pedidos:
-            print("Nenhum pedido encontrado.")
-        else:
-            for p in pedidos:
-                print(f"Pedido {p.id} - Cliente: {p.cliente}")
+        for pedido in pedidos:
+            print(f"Pedido {pedido.id} - Cliente: {pedido.cliente}")
+            for item in pedido.itens:
+                # ADICIONADO exibição da categoria
+                print(f"  Produto: {item.produto}, Qtd: {item.quantidade}, "
+                      f"Preço: R$ {item.preco}, Categoria: {item.categoria}")
+            print()
+        
+        # 3. ATUALIZAÇÃO
+        print("=== 3. ATUALIZAÇÃO ===")
+        if pedido_salvo.id:
+            # REMOVIDO parâmetro nova_data
+            pedido_atualizado = control.atualizar_pedido(
+                pedido_salvo.id,
+                novo_cliente="João Santos Silva"
+            )
+            print(f"Pedido {pedido_atualizado.id} atualizado!")
+            print(f"Novo cliente: {pedido_atualizado.cliente}")
+        
+        # 4. DELEÇÃO
+        print("\n=== 4. DELEÇÃO ===")
+        if pedido_salvo.id:
+            control.deletar_pedido(pedido_salvo.id)
+            print(f"Pedido {pedido_salvo.id} deletado!")
+            
+            # Confirmar deleção
+            pedidos_restantes = control.listar_pedidos_com_itens()
+            print("Pedidos restantes:")
+            if not pedidos_restantes:
+                print("Nenhum pedido encontrado.")
+            else:
+                for pedido in pedidos_restantes:
+                    print(f"Pedido {pedido.id} - Cliente: {pedido.cliente}")
     
-db.close()
+    except Exception as e:
+        print(f"Erro durante execução: {e}")
+    
+    finally:
+        control.fechar()
 
 
- 
